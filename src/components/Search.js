@@ -29,33 +29,38 @@ class Search extends React.Component {
 
     setPage(num) {
         this.setState
-            (
-                () => ({ page: num }),
-                () => (this.props.searchMovie(this.state.search, this.state.type, this.state.page))
-            )
-    }
+        (
+            () => ({page:+num}),
+            () => (this.props.searchMovie(this.state.search, this.state.type, this.state.page))
+        )
 
+        this.state.page = num;
+    }
+    
     handleKey = (event) => {
         if (event.key === 'Enter') {
             this.props.searchMovie(this.state.search, this.state.type);
         }
     }
-
+    
     handleFilter = (event) => {
         this.setState(
             () => ({ type: event.target.dataset.type }),
             () => this.props.searchMovie(this.state.search, this.state.type)
         );
     }
-
+    
     render() {
         let limit = 10;
         let totalPages = Math.ceil(this.props.totalCount / limit);
-        const lastIndex = totalPages <= 10 ? totalPages + 1 : this.state.page + limit;
-        const firstIndex = totalPages <= 10 ? lastIndex - limit + lastIndex + 1 : lastIndex - limit;
-
+        const firstIndex = this.state.page;
+        const lastIndex = firstIndex <= totalPages - limit ? firstIndex + limit : totalPages - firstIndex;
         const num = [];
-        for (let i = 0; i < totalPages; i++) {
+        console.log(`page - ${this.state.page}`); 
+        console.log(`left - ${firstIndex}`); 
+        console.log(`right - ${lastIndex}`); 
+        console.log("---------------------------"); 
+        for (let i = firstIndex; i < lastIndex; i++) {
             num.push(i);
         }
 
@@ -98,15 +103,15 @@ class Search extends React.Component {
                     <button className='btn' onClick={this.prevPage}>Prev</button>
                     <div className='items'>
                         {
-                            num.slice(firstIndex, lastIndex)
+                            num//.slice(firstIndex, lastIndex)
                                 .map
                                 (
-                                    (element, index) =>
+                                    (element) =>
                                     (
                                         <button
                                             className='btn'
                                             style={{ background: this.state.page != element ? "gray" : "" }}
-                                            key={index}
+                                            key={element}
                                             onClick={() => (this.setPage(element))}
                                         >{element}</button>
                                     )
